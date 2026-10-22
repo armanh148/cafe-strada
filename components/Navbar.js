@@ -66,7 +66,7 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
         }}
       >
         <div
-          className="veloura-container"
+          className="veloura-container navbar-header-container"
           style={{
             display: "flex",
             alignItems: "center",
@@ -79,6 +79,7 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
           {/* Logo & Clifton Karachi Location Tag */}
           <a
             href="#hero"
+            className="navbar-logo-link"
             style={{
               textDecoration: "none",
               color: "#3C2115",
@@ -415,6 +416,16 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
           }
         }
         @media (max-width: 768px) {
+          .navbar-header-container {
+            justify-content: center !important;
+          }
+          .navbar-logo-link {
+            justify-content: center !important;
+          }
+          .navbar-logo-link > div {
+            align-items: center !important;
+            text-align: center !important;
+          }
           .navbar-right-actions {
             display: none !important;
           }

@@ -259,10 +259,7 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
             </div>
           </div>
 
-          {/* Cell 4 (Col 1, Row 2): Empty spacing on desktop */}
-          <div className="reviews-empty-cell" />
-
-          {/* Cell 5 (Col 2, Row 2): Review Card 3 */}
+          {/* Cell 4 (Col 1, Row 2): Review Card 3 */}
           <div className="review-card-item">
             <div>
               <div className="review-quote-mark">“</div>
@@ -289,16 +286,17 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
             </div>
           </div>
 
-          {/* Cell 6 (Col 3, Row 2): Photo Card + Interactive Arrows */}
-          <div className="review-photo-arrows-cell">
-            <div className="review-photo-wrapper">
-              <img
-                src={currentSet.photo}
-                alt={currentSet.photoAlt}
-                className="review-photo-img"
-              />
-            </div>
+          {/* Cell 5 (Col 2, Row 2): Photo Card */}
+          <div className="review-photo-card">
+            <img
+              src={currentSet.photo}
+              alt={currentSet.photoAlt}
+              className="review-photo-img"
+            />
+          </div>
 
+          {/* Cell 6 (Col 3, Row 2): Navigation Arrows */}
+          <div className="reviews-arrows-cell">
             <div className="review-nav-arrows">
               <button
                 onClick={handlePrev}
@@ -423,92 +421,33 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
             ))}
           </div>
 
-          {/* Slider Pagination Controls: Left Arrow, Centered Dots, Right Arrow */}
-          <div
-            className="mobile-reviews-controls"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              padding: "6px 2px",
-              marginTop: "8px",
-              flexWrap: "nowrap",
-            }}
-          >
-            {/* Prev Button (Left) */}
+          {/* Slider Pagination Controls: Centered, Balanced Unit */}
+          <div className="mobile-reviews-controls">
             <button
               onClick={handleMobilePrev}
               aria-label="Previous review"
-              className="review-nav-btn"
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "50%",
-                border: "1.5px solid rgba(60, 33, 21, 0.18)",
-                background: "#FFFFFF",
-                color: "#3C2115",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                boxShadow: "0 2px 8px rgba(60, 33, 21, 0.08)",
-                flexShrink: 0,
-              }}
+              className="review-nav-btn mobile-arrow-btn"
             >
-              <ArrowLeft size={18} />
+              <ArrowLeft size={16} />
             </button>
 
-            {/* Centered Dots */}
-            <div
-              style={{
-                display: "flex",
-                gap: "7px",
-                alignItems: "center",
-                justifyContent: "center",
-                flex: 1,
-              }}
-            >
+            <div className="mobile-dots-wrap">
               {ALL_REVIEWS.map((_, dotIdx) => (
                 <button
                   key={dotIdx}
                   onClick={() => scrollToReview(dotIdx)}
                   aria-label={`Go to review ${dotIdx + 1}`}
-                  style={{
-                    width: activeMobileIndex === dotIdx ? "20px" : "7px",
-                    height: "7px",
-                    borderRadius: "999px",
-                    background: activeMobileIndex === dotIdx ? "#3C2115" : "rgba(60, 33, 21, 0.22)",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: 0,
-                    transition: "all 0.25s cubic-bezier(0.16, 1, 0.3, 1)",
-                  }}
+                  className={`mobile-slider-dot ${activeMobileIndex === dotIdx ? "active" : ""}`}
                 />
               ))}
             </div>
 
-            {/* Next Button (Right) */}
             <button
               onClick={handleMobileNext}
               aria-label="Next review"
-              className="review-nav-btn"
-              style={{
-                width: "42px",
-                height: "42px",
-                borderRadius: "50%",
-                border: "1.5px solid rgba(60, 33, 21, 0.18)",
-                background: "#FFFFFF",
-                color: "#3C2115",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                boxShadow: "0 2px 8px rgba(60, 33, 21, 0.08)",
-                flexShrink: 0,
-              }}
+              className="review-nav-btn mobile-arrow-btn"
             >
-              <ArrowRight size={18} />
+              <ArrowRight size={16} />
             </button>
           </div>
         </div>
@@ -603,15 +542,8 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
           color: #8DAE00;
         }
 
-        .review-photo-arrows-cell {
-          display: flex;
-          align-items: flex-end;
-          gap: 18px;
-          height: 100%;
-        }
-
-        .review-photo-wrapper {
-          flex: 1;
+        .review-photo-card {
+          width: 100%;
           height: 100%;
           min-height: 240px;
           border-radius: 26px;
@@ -625,33 +557,41 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
           width: 100%;
           height: 100%;
           object-fit: cover;
+          display: block;
           transition: transform 0.5s ease;
         }
 
-        .review-photo-wrapper:hover .review-photo-img {
+        .review-photo-card:hover .review-photo-img {
           transform: scale(1.05);
+        }
+
+        .reviews-arrows-cell {
+          display: flex;
+          align-items: flex-end;
+          justify-content: flex-end;
+          padding-bottom: 12px;
+          padding-right: 8px;
         }
 
         .review-nav-arrows {
           display: flex;
-          gap: 10px;
-          flex-shrink: 0;
-          margin-bottom: 8px;
+          gap: 12px;
+          align-items: center;
         }
 
         .review-nav-btn {
-          width: 46px;
-          height: 46px;
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           border: 1.5px solid rgba(60, 33, 21, 0.18);
           background: #FFFFFF;
           color: #3C2115;
           display: flex;
           align-items: center;
-          justifyContent: center;
+          justify-content: center;
           cursor: pointer;
-          transition: all 0.25s ease;
-          box-shadow: 0 2px 8px rgba(60, 33, 21, 0.06);
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+          box-shadow: 0 4px 12px rgba(60, 33, 21, 0.06);
         }
 
         .review-nav-btn:hover {
@@ -659,7 +599,7 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
           color: #FAF7F2;
           background: #23150D;
           transform: scale(1.08);
-          box-shadow: 0 4px 16px rgba(35, 21, 13, 0.25);
+          box-shadow: 0 6px 18px rgba(35, 21, 13, 0.22);
         }
 
         @media (max-width: 960px) and (min-width: 769px) {
@@ -670,23 +610,17 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
 
           .reviews-header-cell {
             grid-column: 1 / -1;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
           }
 
-          .reviews-empty-cell {
-            display: none;
-          }
-
-          .review-photo-arrows-cell {
-            grid-column: 1 / -1;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-          }
-
-          .review-photo-wrapper {
+          .review-photo-card {
             height: 220px;
-            max-width: 320px;
+          }
+
+          .reviews-arrows-cell {
+            grid-column: 1 / -1;
+            justify-content: center;
+            padding-top: 10px;
           }
         }
 
@@ -698,7 +632,7 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
           .mobile-reviews-slider-section {
             display: flex !important;
             flex-direction: column !important;
-            gap: 18px !important;
+            gap: 20px !important;
           }
 
           .mobile-reviews-track {
@@ -707,7 +641,7 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
             scroll-snap-type: x mandatory !important;
             -webkit-overflow-scrolling: touch !important;
             gap: 14px !important;
-            padding: 4px 16px 18px !important;
+            padding: 4px 16px 16px !important;
             margin-left: -16px !important;
             margin-right: -16px !important;
           }
@@ -730,8 +664,55 @@ export default function TestimonialsBento({ data = CAFE_STRADA_DATA.testimonials
           .mobile-reviews-controls {
             display: flex !important;
             align-items: center !important;
-            justifyContent: space-between !important;
-            padding: 0 4px !important;
+            justifyContent: center !important;
+            gap: 18px !important;
+            padding: 4px 0 !important;
+            width: 100% !important;
+          }
+
+          .mobile-arrow-btn {
+            width: 42px !important;
+            height: 42px !important;
+            border-radius: 50% !important;
+            border: 1.5px solid rgba(60, 33, 21, 0.18) !important;
+            background: #FFFFFF !important;
+            color: #3C2115 !important;
+            display: flex !important;
+            align-items: center !important;
+            justifyContent: center !important;
+            box-shadow: 0 3px 10px rgba(60, 33, 21, 0.08) !important;
+            flex-shrink: 0 !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+          }
+
+          .mobile-arrow-btn:active {
+            transform: scale(0.92) !important;
+            background: #3C2115 !important;
+            color: #FAF7F2 !important;
+          }
+
+          .mobile-dots-wrap {
+            display: flex !important;
+            align-items: center !important;
+            justifyContent: center !important;
+            gap: 7px !important;
+          }
+
+          .mobile-slider-dot {
+            width: 7px !important;
+            height: 7px !important;
+            border-radius: 999px !important;
+            background: rgba(60, 33, 21, 0.22) !important;
+            border: none !important;
+            cursor: pointer !important;
+            padding: 0 !important;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+          }
+
+          .mobile-slider-dot.active {
+            width: 22px !important;
+            background: #3C2115 !important;
           }
         }
       `}</style>

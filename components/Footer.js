@@ -312,7 +312,7 @@ export default function Footer({ data = CAFE_STRADA_DATA.footer }) {
           .footer-columns-grid {
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
-            gap: 24px 16px !important;
+            gap: 24px 18px !important;
           }
 
           .footer-brand-col {
@@ -327,13 +327,21 @@ export default function Footer({ data = CAFE_STRADA_DATA.footer }) {
             padding-top: 22px;
           }
 
+          .footer-links-col {
+            min-width: 0 !important;
+          }
+
           .footer-links-col h4 {
             font-size: 12px !important;
             margin-bottom: 12px !important;
           }
 
           .footer-links-col a {
-            font-size: 12.5px !important;
+            font-size: 13px !important;
+            display: block !important;
+            line-height: 1.4 !important;
+            word-break: normal !important;
+            overflow-wrap: break-word !important;
           }
         }
       `}</style>

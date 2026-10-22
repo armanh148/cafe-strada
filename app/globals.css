@@ -348,7 +348,7 @@ body {
   font-size: clamp(30px, 12vw, 260px);
   line-height: 0.9;
   letter-spacing: -0.02em;
-  color: #3C2115;
+  color: rgba(60, 33, 21, 0.08);
   text-align: center;
   user-select: none;
   font-weight: 400;
@@ -359,7 +359,7 @@ body {
 }
 
 .display-watermark:hover {
-  color: #23150D;
+  color: rgba(60, 33, 21, 0.18);
 }
 
 /* Hotspot */
