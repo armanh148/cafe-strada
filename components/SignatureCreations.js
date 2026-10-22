@@ -138,18 +138,7 @@ export default function SignatureCreations({ onAddToCart }) {
         </div>
 
         {/* Category Filter Pills */}
-        <div
-          className="no-scrollbar"
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "10px",
-            overflowX: "auto",
-            padding: "4px 8px 14px",
-            marginBottom: "32px",
-            WebkitOverflowScrolling: "touch",
-          }}
-        >
+        <div className="signature-categories-bar no-scrollbar">
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat;
             return (
@@ -443,6 +432,24 @@ export default function SignatureCreations({ onAddToCart }) {
       </div>
 
       <style jsx>{`
+        .signature-categories-bar {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          overflow-x: auto;
+          padding: 4px 8px 14px;
+          margin-bottom: 32px;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        @media (max-width: 860px) {
+          .signature-categories-bar {
+            justify-content: flex-start !important;
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+          }
+        }
+
         .products-grid-or-carousel {
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));

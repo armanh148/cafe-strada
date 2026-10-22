@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowUpRight, Star, Heart, MapPin, Calendar, Utensils, Clock, MessageCircle } from "lucide-react";
+import { ArrowUpRight, Star, Heart, Calendar, Utensils, Clock } from "lucide-react";
 import { useState } from "react";
 import { CAFE_STRADA_DATA } from "@/lib/cafeStradaData";
 
@@ -8,23 +8,8 @@ export default function Hero({ data, onSelectProduct }) {
   const [liked, setLiked] = useState(false);
 
   return (
-    <section id="hero" style={{ paddingTop: "14px", paddingBottom: "46px" }}>
+    <section id="hero" style={{ paddingTop: "20px", paddingBottom: "46px" }}>
       <div className="veloura-container">
-        {/* Location & Heritage Tag */}
-        <div style={{ textAlign: "center", marginBottom: "8px" }}>
-          <span
-            className="section-tag"
-            style={{
-              background: "rgba(60, 33, 21, 0.06)",
-              color: "#3C2115",
-              borderColor: "rgba(60, 33, 21, 0.12)",
-            }}
-          >
-            <MapPin size={13} color="#8DAE00" />
-            <span>Bungalow F-64/1, Block 4, Clifton • Karachi</span>
-          </span>
-        </div>
-
         {/* Giant Display Title */}
         <div style={{ textAlign: "center", marginBottom: "14px" }}>
           <h1

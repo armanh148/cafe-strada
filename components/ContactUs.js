@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   MapPin,
   Phone,
@@ -12,22 +12,40 @@ import {
   Send,
   Check,
   ArrowUpRight,
-  Sparkles
+  Sparkles,
+  ChevronDown,
 } from "lucide-react";
 import { CAFE_STRADA_DATA } from "@/lib/cafeStradaData";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 export default function ContactUs() {
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     inquiryType: "Table Reservation",
-    guests: "2 Guests",
+    guests: "1-2 Guests",
     date: "",
     time: "",
     message: "",
   });
 
   const [submitted, setSubmitted] = useState(false);
+  const [isGuestOpen, setIsGuestOpen] = useState(false);
+  const guestRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (guestRef.current && !guestRef.current.contains(e.target)) {
+        setIsGuestOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
 
   const inquiryOptions = [
     "Table Reservation",
@@ -300,7 +318,7 @@ export default function ContactUs() {
                         boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
                       }}
                     >
-                      <MessageCircle size={14} />
+                      <WhatsAppIcon size={15} color="#FFFFFF" />
                       <span>Chat on WhatsApp</span>
                     </a>
 
@@ -498,31 +516,103 @@ export default function ContactUs() {
 
                 {/* Guest Size & Date Grid */}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", gap: "14px" }}>
-                  <div>
+                  <div ref={guestRef} style={{ position: "relative" }}>
                     <label style={{ fontSize: "12px", fontWeight: 700, color: "#23150D", display: "block", marginBottom: "4px" }}>
                       Party Size
                     </label>
-                    <select
-                      value={formData.guests}
-                      onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+                    <button
+                      type="button"
+                      onClick={() => setIsGuestOpen(!isGuestOpen)}
                       style={{
                         width: "100%",
                         padding: "11px 16px",
                         borderRadius: "14px",
-                        border: "1.5px solid rgba(60, 33, 21, 0.12)",
+                        border: isGuestOpen ? "1.5px solid #23150D" : "1.5px solid rgba(60, 33, 21, 0.12)",
                         background: "#FAF7F2",
                         outline: "none",
                         fontSize: "13.5px",
                         color: "#23150D",
+                        fontWeight: 600,
                         cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-between",
+                        textAlign: "left",
+                        boxSizing: "border-box",
+                        transition: "all 0.2s ease",
                       }}
                     >
-                      {guestOptions.map((g) => (
-                        <option key={g} value={g}>
-                          {g}
-                        </option>
-                      ))}
-                    </select>
+                      <span>{formData.guests}</span>
+                      <ChevronDown
+                        size={16}
+                        style={{
+                          transform: isGuestOpen ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.2s ease",
+                          color: "#6B5548",
+                        }}
+                      />
+                    </button>
+
+                    {/* Custom Dropdown Menu */}
+                    {isGuestOpen && (
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "calc(100% + 6px)",
+                          left: 0,
+                          right: 0,
+                          width: "100%",
+                          background: "#FFFFFF",
+                          borderRadius: "16px",
+                          border: "1.5px solid rgba(60, 33, 21, 0.12)",
+                          boxShadow: "0 14px 36px rgba(0, 0, 0, 0.15)",
+                          padding: "6px",
+                          zIndex: 50,
+                          boxSizing: "border-box",
+                          animation: "fadeIn 0.2s ease-out",
+                        }}
+                      >
+                        {guestOptions.map((g) => {
+                          const isSelected = formData.guests === g;
+                          return (
+                            <div
+                              key={g}
+                              onClick={() => {
+                                setFormData({ ...formData, guests: g });
+                                setIsGuestOpen(false);
+                              }}
+                              style={{
+                                padding: "9px 14px",
+                                borderRadius: "10px",
+                                fontSize: "13px",
+                                fontWeight: isSelected ? 700 : 500,
+                                color: isSelected ? "#FAF7F2" : "#23150D",
+                                background: isSelected ? "#23150D" : "transparent",
+                                cursor: "pointer",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                transition: "all 0.15s ease",
+                                whiteSpace: "nowrap",
+                              }}
+                              onMouseEnter={(e) => {
+                                if (!isSelected) {
+                                  e.currentTarget.style.background = "#FAF7F2";
+                                }
+                              }}
+                              onMouseLeave={(e) => {
+                                if (!isSelected) {
+                                  e.currentTarget.style.background = "transparent";
+                                }
+                              }}
+                            >
+                              <span>{g}</span>
+                              {isSelected && <Check size={14} color="#D9FB36" strokeWidth={3} />}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
                   <div>
@@ -601,7 +691,7 @@ export default function ContactUs() {
                     e.currentTarget.style.boxShadow = "0 6px 20px rgba(37, 211, 102, 0.35)";
                   }}
                 >
-                  <MessageCircle size={18} />
+                  <WhatsAppIcon size={19} color="#FFFFFF" />
                   <span>Send Inquiry via WhatsApp</span>
                 </button>
               </form>

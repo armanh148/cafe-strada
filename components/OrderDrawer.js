@@ -1,10 +1,55 @@
 "use client";
 
 import { useState } from "react";
-import { X, Plus, Minus, Trash2, ArrowUpRight, Check, ShoppingBag, MessageCircle, Phone, MapPin } from "lucide-react";
+import {
+  X,
+  Plus,
+  Minus,
+  Trash2,
+  ArrowUpRight,
+  Check,
+  ShoppingBag,
+  Phone,
+  MapPin,
+  Utensils,
+  Sparkles,
+} from "lucide-react";
 import { CAFE_STRADA_DATA } from "@/lib/cafeStradaData";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
-export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuantity, onRemoveItem, onClearCart }) {
+const RECOMMENDED_ITEMS = [
+  {
+    id: "moroccan-chicken-steak",
+    name: "Moroccan Chicken Steak",
+    price: "Rs. 1,495",
+    tag: "Bestseller",
+    image: "/images/strada-steak.jpg",
+  },
+  {
+    id: "alfredo-pasta",
+    name: "Fettuccine Alfredo Pasta",
+    price: "Rs. 1,295",
+    tag: "Chef's Special",
+    image: "/images/strada-pasta.jpg",
+  },
+  {
+    id: "iced-spanish-latte",
+    name: "Iced Spanish Velvet Latte",
+    price: "Rs. 680",
+    tag: "Artisan Brew",
+    image: "/images/iced-milk-coffee.jpg",
+  },
+];
+
+export default function OrderDrawer({
+  isOpen,
+  onClose,
+  cart = [],
+  onAddToCart,
+  onUpdateQuantity,
+  onRemoveItem,
+  onClearCart,
+}) {
   const [checkoutStep, setCheckoutStep] = useState("cart"); // cart | checkout | success
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -25,6 +70,7 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
 
   const deliveryFee = orderType === "delivery" && subtotal > 0 ? 150 : 0;
   const total = subtotal + deliveryFee;
+  const totalItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const generateWhatsAppMessage = () => {
     let msg = `*New Order - Café Strada (Clifton, Karachi)*\n\n`;
@@ -36,7 +82,9 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
     }
     msg += `\n*Items Ordered:*\n`;
     cart.forEach((item, index) => {
-      msg += `${index + 1}. ${item.name} x ${item.quantity} = Rs. ${(parsePrice(item.price) * item.quantity).toLocaleString()}\n`;
+      msg += `${index + 1}. ${item.name} x ${item.quantity} = Rs. ${(
+        parsePrice(item.price) * item.quantity
+      ).toLocaleString()}\n`;
     });
     msg += `\n*Subtotal:* Rs. ${subtotal.toLocaleString()}`;
     if (deliveryFee > 0) {
@@ -65,48 +113,101 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
         style={{
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
-          padding: "clamp(18px, 3.5vw, 28px)",
+          height: "100%",
+          boxSizing: "border-box",
+          background: "#FAF7F2",
+          padding: 0,
         }}
       >
-        {/* Mobile drag handle */}
+        {/* Top Header Section (Always pinned to top) */}
         <div
           style={{
-            width: "38px",
-            height: "4px",
-            borderRadius: "999px",
-            background: "rgba(60, 33, 21, 0.2)",
-            margin: "0 auto 12px",
+            flexShrink: 0,
+            padding: "14px 20px 14px",
+            borderBottom: "1px solid rgba(60, 33, 21, 0.08)",
+            background: "#FAF7F2",
           }}
-        />
+        >
+          {/* Mobile Drag Indicator Handle */}
+          <div
+            className="drawer-drag-handle"
+            style={{
+              width: "42px",
+              height: "4px",
+              borderRadius: "999px",
+              background: "rgba(60, 33, 21, 0.22)",
+              margin: "0 auto 12px",
+            }}
+          />
 
-        {/* Header */}
-        <div>
           <div
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              paddingBottom: "16px",
-              borderBottom: "1px solid rgba(60, 33, 21, 0.1)",
-              marginBottom: "18px",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <ShoppingBag size={20} color="#3C2115" />
-              <h3
-                className="font-serif"
+            {/* Title & Badge */}
+            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+              <div
                 style={{
-                  fontSize: "22px",
-                  fontWeight: 600,
+                  width: "36px",
+                  height: "36px",
+                  borderRadius: "12px",
+                  background: "#D9FB36",
                   color: "#23150D",
-                  margin: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 2px 8px rgba(217, 251, 54, 0.35)",
                 }}
               >
-                Café Strada Order
-              </h3>
+                <ShoppingBag size={18} strokeWidth={2.5} />
+              </div>
+              <div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <h3
+                    className="font-serif"
+                    style={{
+                      fontSize: "20px",
+                      fontWeight: 700,
+                      color: "#23150D",
+                      margin: 0,
+                      lineHeight: 1.2,
+                    }}
+                  >
+                    Café Strada Order
+                  </h3>
+                  {totalItemCount > 0 && (
+                    <span
+                      style={{
+                        background: "#23150D",
+                        color: "#D9FB36",
+                        fontSize: "10.5px",
+                        fontWeight: 800,
+                        padding: "2px 8px",
+                        borderRadius: "999px",
+                      }}
+                    >
+                      {totalItemCount} {totalItemCount === 1 ? "item" : "items"}
+                    </span>
+                  )}
+                </div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    color: "#8C7667",
+                    letterSpacing: "0.02em",
+                  }}
+                >
+                  Bungalow F-64/1, Clifton • Karachi
+                </p>
+              </div>
             </div>
 
+            {/* Close Button */}
             <button
               onClick={onClose}
               aria-label="Close cart"
@@ -121,57 +222,234 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                 justifyContent: "center",
                 cursor: "pointer",
                 color: "#3C2115",
+                transition: "all 0.2s ease",
               }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.background = "rgba(60, 33, 21, 0.12)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.background = "rgba(60, 33, 21, 0.06)")
+              }
             >
               <X size={18} />
             </button>
           </div>
+        </div>
 
+        {/* Scrollable Content Body (Takes full height between header & footer) */}
+        <div
+          style={{
+            flex: 1,
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: 0,
+          }}
+        >
           {/* Step 1: Cart View */}
           {checkoutStep === "cart" && (
-            <div>
+            <>
               {cart.length === 0 ? (
-                <div style={{ textAlign: "center", padding: "48px 12px" }}>
-                  <div
-                    style={{
-                      width: "60px",
-                      height: "60px",
-                      borderRadius: "50%",
-                      background: "#FCF8DF",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      margin: "0 auto 16px",
-                    }}
-                  >
-                    <ShoppingBag size={26} color="#8DAE00" />
-                  </div>
-                  <h4
-                    className="font-serif"
-                    style={{ fontSize: "18px", color: "#23150D", marginBottom: "6px" }}
-                  >
-                    Your order is empty
-                  </h4>
-                  <p style={{ fontSize: "13px", color: "#7A6456", marginBottom: "20px" }}>
-                    Select sizzling steaks, fettuccine Alfredo, or artisan coffees from our menu.
-                  </p>
-                  <button
-                    onClick={onClose}
-                    className="btn-primary"
-                    style={{ padding: "8px 20px", fontSize: "13px" }}
-                  >
-                    Explore Menu
-                  </button>
-                </div>
-              ) : (
+                /* Luxury Empty State with Quick-Add Bestsellers */
                 <div
                   style={{
                     display: "flex",
                     flexDirection: "column",
-                    gap: "14px",
-                    maxHeight: "360px",
-                    overflowY: "auto",
-                    paddingRight: "6px",
+                    padding: "20px 16px 24px",
+                  }}
+                >
+                  <div style={{ textAlign: "center", marginBottom: "18px" }}>
+                    <div
+                      style={{
+                        width: "64px",
+                        height: "64px",
+                        borderRadius: "50%",
+                        background:
+                          "radial-gradient(circle, rgba(217, 251, 54, 0.4) 0%, rgba(252, 248, 223, 0.8) 70%)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        margin: "0 auto 12px",
+                        boxShadow: "0 8px 20px rgba(60, 33, 21, 0.08)",
+                        border: "1.5px solid rgba(217, 251, 54, 0.6)",
+                      }}
+                    >
+                      <ShoppingBag size={28} color="#23150D" strokeWidth={2} />
+                    </div>
+
+                    <h4
+                      className="font-serif"
+                      style={{
+                        fontSize: "20px",
+                        fontWeight: 700,
+                        color: "#23150D",
+                        margin: "0 0 6px 0",
+                      }}
+                    >
+                      Your order is empty
+                    </h4>
+
+                    <p
+                      style={{
+                        fontSize: "12.5px",
+                        color: "#6B5548",
+                        maxWidth: "320px",
+                        margin: "0 auto",
+                        lineHeight: 1.5,
+                      }}
+                    >
+                      Handcrafted upon order in Clifton, Karachi. Add our bestsellers below or explore the full menu.
+                    </p>
+                  </div>
+
+                  {/* Chef's Recommended Quick-Add Cards */}
+                  <div style={{ marginBottom: "18px" }}>
+                    <div
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: 800,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        color: "#8DAE00",
+                        marginBottom: "10px",
+                        paddingLeft: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "6px",
+                      }}
+                    >
+                      <Sparkles size={13} />
+                      <span>Popular Clifton Favorites (1-Tap Add):</span>
+                    </div>
+
+                    <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                      {RECOMMENDED_ITEMS.map((dish) => (
+                        <div
+                          key={dish.id}
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "12px",
+                            background: "#FFFFFF",
+                            padding: "10px 12px",
+                            borderRadius: "16px",
+                            border: "1px solid rgba(60, 33, 21, 0.08)",
+                            boxShadow: "0 2px 8px rgba(60, 33, 21, 0.04)",
+                            transition: "all 0.2s ease",
+                          }}
+                        >
+                          <img
+                            src={dish.image}
+                            alt={dish.name}
+                            style={{
+                              width: "50px",
+                              height: "50px",
+                              borderRadius: "12px",
+                              objectFit: "cover",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
+                                marginBottom: "2px",
+                              }}
+                            >
+                              <span
+                                style={{
+                                  fontSize: "13px",
+                                  fontWeight: 700,
+                                  color: "#23150D",
+                                  whiteSpace: "nowrap",
+                                  overflow: "hidden",
+                                  textOverflow: "ellipsis",
+                                }}
+                              >
+                                {dish.name}
+                              </span>
+                              <span
+                                style={{
+                                  fontSize: "9px",
+                                  fontWeight: 800,
+                                  color: "#23150D",
+                                  background: "#D9FB36",
+                                  padding: "1px 6px",
+                                  borderRadius: "999px",
+                                  textTransform: "uppercase",
+                                  flexShrink: 0,
+                                }}
+                              >
+                                {dish.tag}
+                              </span>
+                            </div>
+                            <div
+                              style={{
+                                fontSize: "12.5px",
+                                fontWeight: 800,
+                                color: "#3C2115",
+                              }}
+                            >
+                              {dish.price}
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => onAddToCart && onAddToCart(dish)}
+                            style={{
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px",
+                              background: "#D9FB36",
+                              color: "#23150D",
+                              border: "none",
+                              borderRadius: "999px",
+                              padding: "7px 12px",
+                              fontSize: "12px",
+                              fontWeight: 800,
+                              cursor: "pointer",
+                              flexShrink: 0,
+                              boxShadow: "0 2px 6px rgba(217, 251, 54, 0.4)",
+                              transition: "transform 0.15s ease",
+                            }}
+                            onMouseEnter={(e) => (e.currentTarget.style.transform = "scale(1.05)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+                          >
+                            <Plus size={13} strokeWidth={3} />
+                            <span>Add</span>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Explore Full Menu Button */}
+                  <button
+                    onClick={onClose}
+                    className="btn-primary"
+                    style={{
+                      padding: "12px 24px",
+                      fontSize: "13.5px",
+                      justifyContent: "center",
+                      width: "100%",
+                      boxShadow: "0 6px 18px rgba(35, 21, 13, 0.2)",
+                    }}
+                  >
+                    <span>Explore Full Continental Menu</span>
+                    <ArrowUpRight size={15} className="arrow-icon" />
+                  </button>
+                </div>
+              ) : (
+                /* Cart Items List */
+                <div
+                  style={{
+                    padding: "18px 20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "12px",
                   }}
                 >
                   {cart.map((item) => (
@@ -181,10 +459,11 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                         display: "flex",
                         alignItems: "center",
                         gap: "14px",
-                        background: "#F4EFEA",
-                        padding: "12px",
+                        background: "#FFFFFF",
+                        padding: "12px 14px",
                         borderRadius: "18px",
-                        border: "1px solid rgba(60, 33, 21, 0.06)",
+                        border: "1px solid rgba(60, 33, 21, 0.08)",
+                        boxShadow: "0 2px 8px rgba(60, 33, 21, 0.04)",
                       }}
                     >
                       <img
@@ -193,16 +472,21 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                         style={{
                           width: "56px",
                           height: "56px",
-                          borderRadius: "12px",
+                          borderRadius: "14px",
                           objectFit: "cover",
+                          flexShrink: 0,
                         }}
                       />
-                      <div style={{ flex: 1 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
                         <div
                           style={{
                             fontSize: "14px",
                             fontWeight: 700,
                             color: "#23150D",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            marginBottom: "2px",
                           }}
                         >
                           {item.name}
@@ -210,8 +494,8 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                         <div
                           style={{
                             fontSize: "13px",
-                            fontWeight: 600,
-                            color: "#8DAE00",
+                            fontWeight: 700,
+                            color: "#3C2115",
                           }}
                         >
                           {item.price}
@@ -224,10 +508,11 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                           display: "flex",
                           alignItems: "center",
                           gap: "8px",
-                          background: "#FFFFFF",
-                          padding: "4px 8px",
+                          background: "#FAF7F2",
+                          padding: "5px 9px",
                           borderRadius: "999px",
                           border: "1px solid rgba(60, 33, 21, 0.1)",
+                          flexShrink: 0,
                         }}
                       >
                         <button
@@ -240,11 +525,20 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                             display: "flex",
                             alignItems: "center",
                             color: "#3C2115",
+                            padding: "2px",
                           }}
                         >
-                          <Minus size={13} />
+                          <Minus size={13} strokeWidth={2.5} />
                         </button>
-                        <span style={{ fontSize: "12.5px", fontWeight: 700 }}>
+                        <span
+                          style={{
+                            fontSize: "13px",
+                            fontWeight: 800,
+                            color: "#23150D",
+                            minWidth: "16px",
+                            textAlign: "center",
+                          }}
+                        >
                           {item.quantity}
                         </span>
                         <button
@@ -257,9 +551,10 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                             display: "flex",
                             alignItems: "center",
                             color: "#3C2115",
+                            padding: "2px",
                           }}
                         >
-                          <Plus size={13} />
+                          <Plus size={13} strokeWidth={2.5} />
                         </button>
                       </div>
 
@@ -269,55 +564,117 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                         style={{
                           background: "transparent",
                           border: "none",
-                          color: "#998274",
+                          color: "#A48E80",
                           cursor: "pointer",
-                          padding: "4px",
+                          padding: "6px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          transition: "color 0.2s ease",
+                          flexShrink: 0,
                         }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "#DC2626")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "#A48E80")}
                       >
                         <Trash2 size={16} />
                       </button>
                     </div>
                   ))}
+
+                  <div style={{ textAlign: "center", paddingTop: "8px" }}>
+                    <button
+                      onClick={onClose}
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "#6B5548",
+                        fontSize: "12.5px",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                      }}
+                    >
+                      + Add more items from menu
+                    </button>
+                  </div>
                 </div>
               )}
-            </div>
+            </>
           )}
 
           {/* Step 2: Details & WhatsApp Dispatch */}
           {checkoutStep === "checkout" && (
-            <form onSubmit={handleCheckoutSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+            <form
+              onSubmit={handleCheckoutSubmit}
+              style={{
+                padding: "20px",
+                display: "flex",
+                flexDirection: "column",
+                gap: "14px",
+              }}
+            >
               {/* Dining / Order Type Selector */}
               <div>
-                <label style={{ fontSize: "12px", fontWeight: 700, color: "#23150D", display: "block", marginBottom: "6px" }}>
+                <label
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#23150D",
+                    display: "block",
+                    marginBottom: "6px",
+                  }}
+                >
                   Select Dining Preference
                 </label>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "8px" }}>
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "repeat(3, 1fr)",
+                    gap: "8px",
+                  }}
+                >
                   {["dine-in", "takeaway", "delivery"].map((type) => (
                     <button
                       key={type}
                       type="button"
                       onClick={() => setOrderType(type)}
                       style={{
-                        padding: "8px",
-                        borderRadius: "10px",
+                        padding: "9px 6px",
+                        borderRadius: "12px",
                         fontSize: "12px",
                         fontWeight: 700,
                         textTransform: "capitalize",
                         cursor: "pointer",
-                        border: orderType === type ? "2px solid #23150D" : "1px solid rgba(60, 33, 21, 0.15)",
+                        border:
+                          orderType === type
+                            ? "2px solid #23150D"
+                            : "1px solid rgba(60, 33, 21, 0.15)",
                         background: orderType === type ? "#D9FB36" : "#FFFFFF",
                         color: "#23150D",
+                        transition: "all 0.15s ease",
                       }}
                     >
-                      {type === "dine-in" ? "Dine-In" : type === "takeaway" ? "Takeaway" : "Clifton Delivery"}
+                      {type === "dine-in"
+                        ? "Dine-In"
+                        : type === "takeaway"
+                        ? "Takeaway"
+                        : "Delivery"}
                     </button>
                   ))}
                 </div>
               </div>
 
               <div>
-                <label style={{ fontSize: "12px", fontWeight: 700, color: "#23150D", display: "block", marginBottom: "4px" }}>
-                  Your Name
+                <label
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#23150D",
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  Your Name *
                 </label>
                 <input
                   type="text"
@@ -332,13 +689,23 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                     border: "1.5px solid rgba(60, 33, 21, 0.15)",
                     outline: "none",
                     fontSize: "14px",
+                    background: "#FFFFFF",
+                    boxSizing: "border-box",
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "12px", fontWeight: 700, color: "#23150D", display: "block", marginBottom: "4px" }}>
-                  WhatsApp / Phone Number
+                <label
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#23150D",
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  WhatsApp / Phone Number *
                 </label>
                 <input
                   type="tel"
@@ -353,17 +720,33 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                     border: "1.5px solid rgba(60, 33, 21, 0.15)",
                     outline: "none",
                     fontSize: "14px",
+                    background: "#FFFFFF",
+                    boxSizing: "border-box",
                   }}
                 />
               </div>
 
               <div>
-                <label style={{ fontSize: "12px", fontWeight: 700, color: "#23150D", display: "block", marginBottom: "4px" }}>
-                  {orderType === "dine-in" ? "Table Number or Reservation Time" : "Delivery Address in Clifton / DHA"}
+                <label
+                  style={{
+                    fontSize: "12px",
+                    fontWeight: 700,
+                    color: "#23150D",
+                    display: "block",
+                    marginBottom: "4px",
+                  }}
+                >
+                  {orderType === "dine-in"
+                    ? "Table Number or Reservation Time"
+                    : "Delivery Address in Clifton / DHA"}
                 </label>
                 <input
                   type="text"
-                  placeholder={orderType === "dine-in" ? "e.g. Table 5 or Today 8:00 PM" : "e.g. Block 4, Clifton"}
+                  placeholder={
+                    orderType === "dine-in"
+                      ? "e.g. Table 5 or Today 8:00 PM"
+                      : "e.g. Block 4, Clifton"
+                  }
                   value={addressOrTable}
                   onChange={(e) => setAddressOrTable(e.target.value)}
                   style={{
@@ -373,20 +756,36 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                     border: "1.5px solid rgba(60, 33, 21, 0.15)",
                     outline: "none",
                     fontSize: "14px",
+                    background: "#FFFFFF",
+                    boxSizing: "border-box",
                   }}
                 />
               </div>
 
-              <div style={{ background: "#FCF8DF", padding: "12px", borderRadius: "12px", fontSize: "12px", color: "#3C2115" }}>
-                ✦ This will automatically send your formatted order straight to <strong>Café Strada's official WhatsApp</strong> for instant preparation!
+              <div
+                style={{
+                  background: "#FCF8DF",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  fontSize: "12px",
+                  color: "#3C2115",
+                  lineHeight: 1.45,
+                }}
+              >
+                ✦ Your order will be formatted and delivered straight to{" "}
+                <strong>Café Strada's official WhatsApp</strong> desk for instant
+                preparation!
               </div>
 
-              <div className="drawer-checkout-actions" style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+              <div
+                className="drawer-checkout-actions"
+                style={{ display: "flex", gap: "10px", marginTop: "6px" }}
+              >
                 <button
                   type="button"
                   onClick={() => setCheckoutStep("cart")}
                   className="btn-secondary"
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, padding: "12px" }}
                 >
                   Back
                 </button>
@@ -409,7 +808,7 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                     boxShadow: "0 6px 18px rgba(37, 211, 102, 0.35)",
                   }}
                 >
-                  <MessageCircle size={16} />
+                  <WhatsAppIcon size={17} color="#FFFFFF" />
                   <span>Send via WhatsApp (Rs. {total.toLocaleString()})</span>
                 </button>
               </div>
@@ -418,11 +817,21 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
 
           {/* Step 3: Success Confirmation */}
           {checkoutStep === "success" && (
-            <div style={{ textAlign: "center", padding: "48px 12px" }}>
+            <div
+              style={{
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                textAlign: "center",
+                padding: "36px 20px",
+              }}
+            >
               <div
                 style={{
-                  width: "68px",
-                  height: "68px",
+                  width: "72px",
+                  height: "72px",
                   borderRadius: "50%",
                   background: "#D9FB36",
                   display: "flex",
@@ -432,16 +841,29 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                   boxShadow: "0 8px 24px rgba(217, 251, 54, 0.5)",
                 }}
               >
-                <Check size={32} color="#23150D" />
+                <Check size={36} color="#23150D" strokeWidth={3} />
               </div>
               <h4
                 className="font-serif"
-                style={{ fontSize: "22px", color: "#23150D", marginBottom: "6px" }}
+                style={{
+                  fontSize: "22px",
+                  color: "#23150D",
+                  marginBottom: "8px",
+                }}
               >
                 Order Sent via WhatsApp!
               </h4>
-              <p style={{ fontSize: "13.5px", color: "#6B5548", marginBottom: "24px" }}>
-                Café Strada staff has received your order and will confirm delivery or table reservation shortly.
+              <p
+                style={{
+                  fontSize: "13.5px",
+                  color: "#6B5548",
+                  maxWidth: "320px",
+                  margin: "0 auto 24px",
+                  lineHeight: 1.5,
+                }}
+              >
+                Café Strada Clifton staff has received your order and will confirm
+                preparation or table reservation shortly.
               </p>
               <button
                 onClick={() => {
@@ -449,7 +871,7 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                   onClose();
                 }}
                 className="btn-primary"
-                style={{ padding: "10px 24px" }}
+                style={{ padding: "12px 32px", fontSize: "14px" }}
               >
                 Done
               </button>
@@ -457,12 +879,15 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
           )}
         </div>
 
-        {/* Footer Summary (if in cart step and cart has items) */}
+        {/* Bottom Checkout Footer (Pinned to bottom when items are present) */}
         {checkoutStep === "cart" && cart.length > 0 && (
           <div
             style={{
+              flexShrink: 0,
               borderTop: "1px solid rgba(60, 33, 21, 0.1)",
-              paddingTop: "18px",
+              padding: "16px 20px 20px",
+              background: "#FFFFFF",
+              boxShadow: "0 -4px 18px rgba(60, 33, 21, 0.04)",
             }}
           >
             <div
@@ -475,7 +900,9 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
               }}
             >
               <span>Subtotal</span>
-              <span>Rs. {subtotal.toLocaleString()}</span>
+              <span style={{ fontWeight: 600, color: "#23150D" }}>
+                Rs. {subtotal.toLocaleString()}
+              </span>
             </div>
             <div
               style={{
@@ -483,11 +910,13 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                 justifyContent: "space-between",
                 fontSize: "13px",
                 color: "#7A6456",
-                marginBottom: "12px",
+                marginBottom: "10px",
               }}
             >
               <span>Service / Delivery</span>
-              <span>{deliveryFee === 0 ? "FREE" : `Rs. ${deliveryFee}`}</span>
+              <span style={{ fontWeight: 600, color: "#25D366" }}>
+                {deliveryFee === 0 ? "FREE" : `Rs. ${deliveryFee}`}
+              </span>
             </div>
             <div
               style={{
@@ -496,7 +925,9 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
                 fontSize: "17px",
                 fontWeight: 800,
                 color: "#23150D",
-                marginBottom: "18px",
+                marginBottom: "16px",
+                paddingTop: "6px",
+                borderTop: "1px dashed rgba(60, 33, 21, 0.12)",
               }}
             >
               <span>Total</span>
@@ -508,8 +939,9 @@ export default function OrderDrawer({ isOpen, onClose, cart = [], onUpdateQuanti
               className="btn-primary"
               style={{
                 width: "100%",
-                padding: "14px",
+                padding: "13px",
                 fontSize: "14px",
+                justifyContent: "center",
               }}
             >
               <span>Proceed to Checkout</span>

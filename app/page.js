@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { CAFE_STRADA_DATA } from "@/lib/cafeStradaData";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
@@ -16,21 +16,23 @@ import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import OrderDrawer from "@/components/OrderDrawer";
 import StoryModal from "@/components/StoryModal";
-import MobileBottomBar from "@/components/MobileBottomBar";
 import ScrollProgressBar from "@/components/ScrollProgressBar";
-import { Check, MessageCircle } from "lucide-react";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
+import { Check } from "lucide-react";
 
 export default function Home() {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isStoryOpen, setIsStoryOpen] = useState(false);
-  const [toastMessage, setToastMessage] = useState(null);
+  const [toastData, setToastData] = useState(null);
+  const toastTimeoutRef = useRef(null);
 
-  const showToast = (message) => {
-    setToastMessage(message);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 2500);
+  const showToast = (name, subtitle = "Added to order") => {
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    setToastData({ name, subtitle });
+    toastTimeoutRef.current = setTimeout(() => {
+      setToastData(null);
+    }, 3000);
   };
 
   const handleAddToCart = (product) => {
@@ -44,7 +46,7 @@ export default function Home() {
         return [...prevCart, { ...product, quantity: 1 }];
       }
     });
-    showToast(`Added "${product.name}" to your order`);
+    showToast(product.name, "Added to order");
   };
 
   const handleUpdateQuantity = (productId, delta) => {
@@ -76,55 +78,68 @@ export default function Home() {
       {/* Scroll indicator */}
       <ScrollProgressBar />
 
-      {/* Floating interactive toast */}
-      {toastMessage && (
+      {/* Floating Interactive Toast Alert (Top Dynamic Capsule) */}
+      {toastData && (
         <div
-          style={{
-            position: "fixed",
-            bottom: "32px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            background: "#23150D",
-            color: "#FAF7F2",
-            padding: "12px 24px",
-            borderRadius: "999px",
-            fontSize: "13.5px",
-            fontWeight: 600,
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            boxShadow: "0 12px 30px rgba(0, 0, 0, 0.3)",
-            zIndex: 100,
-            animation: "fadeIn 0.25s ease-out",
-          }}
+          role="status"
+          aria-live="polite"
+          className="add-to-cart-toast"
         >
-          <div
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", minWidth: 0, flex: 1 }}>
+            <div
+              style={{
+                width: "24px",
+                height: "24px",
+                borderRadius: "50%",
+                background: "#D9FB36",
+                color: "#23150D",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+                boxShadow: "0 2px 6px rgba(217, 251, 54, 0.4)",
+              }}
+            >
+              <Check size={14} strokeWidth={3.5} />
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", minWidth: 0, flex: 1, lineHeight: 1.25 }}>
+              <span
+                style={{
+                  fontSize: "13.5px",
+                  fontWeight: 700,
+                  color: "#FAF7F2",
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {toastData.name}
+              </span>
+              <span style={{ fontSize: "11px", fontWeight: 500, color: "#C8B6A6" }}>
+                {toastData.subtitle}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setIsCartOpen(true);
+              setToastData(null);
+            }}
             style={{
-              width: "20px",
-              height: "20px",
-              borderRadius: "50%",
               background: "#D9FB36",
               color: "#23150D",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Check size={12} strokeWidth={3} />
-          </div>
-          <span>{toastMessage}</span>
-          <button
-            onClick={() => setIsCartOpen(true)}
-            style={{
-              background: "rgba(255, 255, 255, 0.15)",
-              color: "#D9FB36",
               border: "none",
               borderRadius: "999px",
-              padding: "4px 10px",
+              padding: "7px 14px",
               fontSize: "12px",
-              fontWeight: 700,
+              fontWeight: 800,
               cursor: "pointer",
-              marginLeft: "6px",
+              flexShrink: 0,
+              whiteSpace: "nowrap",
+              boxShadow: "0 2px 8px rgba(217, 251, 54, 0.35)",
+              transition: "transform 0.15s ease",
             }}
           >
             View Order
@@ -165,7 +180,7 @@ export default function Home() {
           e.currentTarget.style.boxShadow = "0 8px 24px rgba(37, 211, 102, 0.45)";
         }}
       >
-        <MessageCircle size={28} fill="#FFFFFF" color="#25D366" />
+        <WhatsAppIcon size={30} color="#FFFFFF" />
       </a>
 
       {/* Sticky Top Navbar */}
@@ -237,6 +252,7 @@ export default function Home() {
         isOpen={isCartOpen}
         onClose={() => setIsCartOpen(false)}
         cart={cart}
+        onAddToCart={handleAddToCart}
         onUpdateQuantity={handleUpdateQuantity}
         onRemoveItem={handleRemoveItem}
         onClearCart={handleClearCart}
@@ -247,20 +263,6 @@ export default function Home() {
         isOpen={isStoryOpen}
         onClose={() => setIsStoryOpen(false)}
       />
-
-      {/* Luxury Mobile Sticky Action Bar */}
-      <MobileBottomBar
-        cartCount={totalCartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-      />
-
-      <style jsx>{`
-        @media (max-width: 768px) {
-          .floating-whatsapp-btn {
-            display: none !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }

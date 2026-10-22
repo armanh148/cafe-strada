@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { ShoppingBag, ArrowUpRight, Menu, X, Phone, MessageCircle } from "lucide-react";
 import { CAFE_STRADA_DATA } from "@/lib/cafeStradaData";
+import WhatsAppIcon from "@/components/WhatsAppIcon";
 
 export default function Navbar({ cartCount = 0, onOpenCart }) {
   const [scrolled, setScrolled] = useState(false);
@@ -198,7 +199,7 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
               }}
               className="whatsapp-btn"
             >
-              <MessageCircle size={15} />
+              <WhatsAppIcon size={16} color="#FFFFFF" />
               <span className="whatsapp-text">WhatsApp</span>
             </a>
 
@@ -379,6 +380,30 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
                   <span>Call: 021-35374477</span>
                 </a>
 
+                <a
+                  href={`https://wa.me/${CAFE_STRADA_DATA.contact.rawWhatsApp}?text=Hi%20Cafe%20Strada`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    gap: "8px",
+                    background: "#25D366",
+                    color: "#FFFFFF",
+                    border: "none",
+                    padding: "12px",
+                    borderRadius: "999px",
+                    fontSize: "13.5px",
+                    fontWeight: 700,
+                    textDecoration: "none",
+                    boxShadow: "0 4px 12px rgba(37, 211, 102, 0.3)",
+                  }}
+                >
+                  <WhatsAppIcon size={17} color="#FFFFFF" />
+                  <span>WhatsApp: {CAFE_STRADA_DATA.footer.mobileWhatsApp}</span>
+                </a>
+
                 <button
                   onClick={() => {
                     setMobileMenuOpen(false);
@@ -417,17 +442,28 @@ export default function Navbar({ cartCount = 0, onOpenCart }) {
         }
         @media (max-width: 768px) {
           .navbar-header-container {
-            justify-content: center !important;
+            justify-content: space-between !important;
           }
           .navbar-logo-link {
-            justify-content: center !important;
+            justify-content: flex-start !important;
           }
           .navbar-logo-link > div {
-            align-items: center !important;
-            text-align: center !important;
+            align-items: flex-start !important;
+            text-align: left !important;
           }
           .navbar-right-actions {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+          }
+          .desktop-order-btn {
             display: none !important;
+          }
+          .whatsapp-btn {
+            display: none !important;
+          }
+          .mobile-toggle {
+            display: inline-flex !important;
           }
         }
         @media (max-width: 580px) {
